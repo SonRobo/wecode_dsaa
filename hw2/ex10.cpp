@@ -35,15 +35,19 @@ bool check(int x, int y, int size)
 double heuristic(int x, int y, Pair dest)
 {
     // euclid
+
     // double dis = (x - dest.first) * (x - dest.first) + (y - dest.second) * (y - dest.second);
     // return sqrt(dis);
     // manhattan
-    int dx = abs(x - dest.first);
-    int dy = abs(y - dest.second);
-    return dx + dy + min(dx, dy);
+
+    // int dx = abs(x - dest.first);
+    // int dy = abs(y - dest.second);
+    // return dx + dy + min(dx, dy);
     // double dis = abs(x - dest.first) + abs(y - dest.second);
     // return dis;
-    return 0;
+    // another way
+    return max(abs(x - dest.first), abs(y - dest.second));
+    // return 0;
 }
 
 void a_star(vector<vector<int>> map, Pair start, Pair end)
@@ -100,7 +104,7 @@ int main()
     Pair player, des;
     cin >> player.first >> player.second >> des.first >> des.second;
     vector<vector<int>> map(m, vector<int>(n));
-    for (int i = 0; i < m; i++)
+    for (int i = m - 1; i >= 0; i--)
     {
         for (int j = 0; j < n; j++)
         {
@@ -108,4 +112,12 @@ int main()
         }
     }
     a_star(map, player, des);
+    for (int i = m - 1; i >= 0; i--)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            cout << map[i][j] << " ";
+        }
+        cout << endl;
+    }
 }
