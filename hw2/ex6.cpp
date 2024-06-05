@@ -7,114 +7,111 @@
 
 using namespace std;
 
+class Compare
+{
+private:
+public:
+    bool operator()(pair<int, string> a, pair<int, string> b)
+    {
+        return a.first > b.first;
+    }
+};
+
 class Graph
 {
 private:
-    vector<string> names;                  // ds ten cac dinh
-    map<string, map<string, int>> adjList; // anh xa tu ten -> index
+    vector<string> names;             // ds ten cac dinh
+    map<string, set<string>> adjList; // anh xa tu ten -> index
+    vector<int> colored;
+    set<int> colors;
+    map<string, int> util;
+    vector<pair<int, string>> vertex_sorted; // sort theo so dinh ke
 
 public:
-    void input(int v, int n)
+    void input(int v, int e)
     {
         for (int i = 0; i < v; i++)
         {
-            string x;
-            cin >> x;
-            names.push_back(x);
-            adjList[x];
+            string vertex;
+            cin >> vertex;
+            adjList[vertex];
+            names.push_back(vertex);
         }
+
+        for (int i = 0; i < e; i++)
+        {
+            string x, y;
+            cin >> x >> y;
+            adjList[x].insert(y);
+            adjList[y].insert(x);
+        }
+
         for (int i = 0; i < v; i++)
         {
-            for (int j = 0; j < v; j++)
+            util[names[i]] = -1;
+        }
+        // for (auto vertex : names)
+        // {
+        //     vertex_sorted.push_back(make_pair(adjList[vertex].size(), vertex));
+        // }
+        // sort(vertex_sorted.begin(), vertex_sorted.end(), Compare());
+        // for (int i = 0; i < names.size(); i++)
+        // {
+        //     names[i] = vertex_sorted[i].second;
+        // }
+    }
+
+    void solve()
+    {
+        bool check = false;
+        // string x;
+        // cin >> x;
+        map<string, set<string>> temp; // save adjacent vertex
+        for (auto x : names)
+        {
+            for (auto y : names)
             {
-                int x;
-                cin >> x;
-                if (x > 0 && i != j)
+                if (y != x)
                 {
-                    adjList[names[i]].insert({names[j], x});
+                    if (adjList[x].count(y) || adjList[y].count(x))
+                    {
+                        temp[x].insert(y);
+                    }
                 }
             }
         }
-    }
-
-    void dijkstra(string s, string e)
-    {
-        if (adjList[s].empty())
-        {
-            cout << "-unreachable-" << endl;
-            return;
-        }
-
-        map<string, int> dist;
-        map<string, string> trace;
-        set<pair<int, string>> pq;
-        set<string> expanded;
-
         for (auto vertex : names)
         {
-            dist[vertex] = 1000000;
-        }
-        dist[s] = 0;
-        pq.insert({0, s});
-        while (!pq.empty())
-        {
-            string x = pq.begin()->second;
-            pq.erase(pq.begin());
-            expanded.insert(x);
-
-            for (auto temp : adjList[x])
+            for (int i = 0; i < 10000; i++)
             {
-                string v = temp.first;
-                int weight = temp.second;
-                if (dist[v] > dist[x] + weight)
+                bool check = true;
+                for (auto adjVertex : temp[vertex])
                 {
-                    pq.erase({dist[v], v});
-                    dist[v] = dist[x] + weight;
-                    trace[v] = x;
-                    pq.insert({dist[v], v});
+                    if (i == util[adjVertex])
+                    {
+                        check = false;
+                        break;
+                    }
+                }
+                if (check)
+                {
+                    util[vertex] = i;
+                    break;
                 }
             }
         }
-
-        if (dist[e] > 1000000)
+        for (auto vertex : names)
         {
-            cout << "-unreachable-" << endl;
-        }
-        else
-        {
-            vector<string> path;
-            for (string v = e; v != s; v = trace[v])
-            {
-                path.push_back(v);
-            }
-            path.push_back(s);
-            reverse(path.begin(), path.end());
-
-            cout << "Shortest path from " << s << " to " << e << ": ";
-            for (auto &v : path)
-            {
-                cout << v << " ";
-            }
-            cout << "\nDistance: " << dist[e] << endl;
-            cout << "so dinh mo rong: " << expanded.size() << endl;
-        }
-    }
-    void solve(int n)
-    {
-        while (n--)
-        {
-            string start, end;
-            cin >> start >> end;
-            dijkstra(start, end);
+            cout << util[vertex] << " ";
         }
     }
 };
 
 int main()
 {
+    int v, e;
+    cin >> v >> e;
     Graph a;
-    int v, n;
-    cin >> v >> n;
-    a.input(v, n);
-    a.solve(n);
+    a.input(v, e);
+    a.solve();
 }

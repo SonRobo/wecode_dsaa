@@ -5,6 +5,7 @@
 #include <set>
 #include <algorithm>
 #include <queue>
+#include <climits>
 
 using namespace std;
 
@@ -104,7 +105,7 @@ public:
 
             for (int i = 0; i < v; i++)
             {
-                if (adjMatrix[current_vertex][i] > 0 && !close[i])
+                if (adjMatrix[current_vertex][i] > 0)
                 {
                     int weight = adjMatrix[current_vertex][i];
                     if (dist[i] > dist[current_vertex] + weight)
