@@ -1,38 +1,51 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <string.h>
 using namespace std;
 
-vector<int> dist(const vector<vector<int>> &graph, int start, int n)
+#define MAX 100005
+
+vector<int> graph[MAX];
+int depth[MAX];
+int parent[MAX];
+
+void dfs(int v, int p, int d)
 {
-    vector<int> distances(n + 1, -1);
-    queue<int> q;
-    q.push(start);
-    distances[start] = 0;
-
-    while (!q.empty())
+    depth[v] = d;
+    parent[v] = p;
+    for (int u : graph[v])
     {
-        int current = q.front();
-        q.pop();
-
-        for (int vertex : graph[current])
+        if (u != p)
         {
-            if (distances[vertex] == -1)
-            {
-                distances[vertex] = distances[current] + 1;
-                q.push(vertex);
-            }
+            dfs(u, v, d + 1);
         }
     }
-    return distances;
+}
+
+int lca(int a, int b)
+{
+    while (depth[a] > depth[b])
+    {
+        a = parent[a];
+    }
+    while (depth[b] > depth[a])
+    {
+        b = parent[b];
+    }
+    while (a != b)
+    {
+        a = parent[a];
+        b = parent[b];
+    }
+
+    return a;
 }
 
 int main()
 {
     int n, q;
     cin >> n >> q;
-
-    vector<vector<int>> graph(n + 1);
 
     for (int i = 0; i < n - 1; i++)
     {
@@ -42,16 +55,16 @@ int main()
         graph[b].push_back(a);
     }
 
-    vector<vector<int>> save_distances(n + 1);
-    for (int i = 1; i <= n; i++)
-    {
-        save_distances[i] = dist(graph, i, n);
-    }
+    memset(parent, -1, sizeof(parent));
+    dfs(1, 1, 0);
 
     for (int i = 0; i < q; i++)
     {
         int a, b;
         cin >> a >> b;
-        cout << save_distances[a][b] << endl;
+        int ans = lca(a, b);
+        int dist = depth[a] + depth[b] - 2 * depth[ans];
+        cout << dist << endl;
     }
+    return 0;
 }
