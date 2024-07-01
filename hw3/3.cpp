@@ -6,6 +6,9 @@ using namespace std;
 
 int arr[MAX];
 int len[MAX]; // save the smallest number of sequence has len i
+int trace[MAX];
+int result[MAX];
+int idx[MAX];
 
 int binary_search(int x, int n)
 {
@@ -35,7 +38,17 @@ int solve(int n)
     {
         int pos = binary_search(arr[i], res);
         len[pos + 1] = arr[i];
+        idx[pos + 1] = i;
+        trace[i] = pos > 0 ? idx[pos] : -1;
         res = max(res, pos + 1);
+    }
+    int x = idx[res];
+    int l = res;
+    while (x >= 0)
+    {
+        result[l] = arr[x];
+        x = trace[x];
+        l--;
     }
     return res;
 }
@@ -47,5 +60,10 @@ int main()
     {
         cin >> arr[i];
     }
-    cout << solve(n) << endl;
+    int x = solve(n);
+    cout << x << endl;
+    for (int i = 1; i <= x; i++)
+    {
+        cout << result[i] << " ";
+    }
 }

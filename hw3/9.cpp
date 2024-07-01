@@ -4,7 +4,7 @@
 #include <string.h>
 using namespace std;
 
-#define MAX 100005
+#define MAX 200005
 
 vector<int> graph[MAX];
 int depth[MAX];
